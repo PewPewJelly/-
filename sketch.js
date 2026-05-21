@@ -1,11 +1,12 @@
 /* 숭실 단어 탐험 v0.2.2 - 아이템 하위 호환 로직 추가 버전 */
 /*
 필요 기능
-- 2개의 스테이지
-- 마우스,키보드 입력
+- 2개의 스테이지--
+- 마우스,키보드 입력o
 - 시작 화면에서 소개 및 사용법 안내 + 기존 게임에서 추가된 기능에 대한 설명
 - 종료 화면에서 게임을 다시 할지 묻는 안내o, 제작자의 이름과 소속, 제작 소감
-- 중간 저장을 통해 이어하는 기능 
+- 중간 저장을 통해 이어하는 기능
+- 
 */
 
 const MAX_TURNS = 2;
@@ -69,9 +70,27 @@ function drawCollectionBox(x, y) {
 function mousePressed() {
   if (gameState.isExploring) return;
   let pW = 280, pX = width/2 - pW/2;
+  
+  // 1. 타이틀 화면 처리
+  if (gameState.activeView === "title") {
+    // 새 게임 시작 버튼 범위
+    if (mouseX > width / 2 - 140 && mouseX < width / 2 + 140 && mouseY > height / 2 + 80 && mouseY < height / 2 + 120) {
+      resetGame();
+    }
+    // 이어하기 버튼 범위
+    else if (localStorage.getItem("ssu_word_game_save") &&
+             mouseX > width / 2 - 140 && mouseX < width / 2 + 140 && mouseY > height / 2 + 135 && mouseY < height / 2 + 175) {
+      loadGameProgress();
+    }
+    return;
+  }
+  
+  // 2. 폰 화면에서 돌아가기
   if (gameState.activeView === "phone" && mouseX > pX && mouseX < pX + 150 && mouseY > 80 && mouseY < 120) {
     gameState.activeView = "map"; updateDOMVisibility(); return;
   }
+  
+  // 3. 맵 화면에서 건물 클릭
   if (gameState.activeView === "map") {
     for (let b of buildings) {
       if (mouseX > width * b.x && mouseX < width * b.x + width * b.w && mouseY > height * b.y && mouseY < height * b.y + height * b.h && b.id !== 7) {
@@ -82,16 +101,21 @@ function mousePressed() {
       gameState.activeView = "phone"; updateDOMVisibility();
     }
   }
-  if (gameState.activeView === "title") {
-    gameState.activeView = "map"; updateDOMVisibility();
-  }
+  
+  // 4. 게임 승리 오버레이 클릭
   else if (gameState.activeView === "gameWin") {
-    if(mouseX > width / 2 - 150 && mouseX < width / 2 + 150 && mouseY > height / 2 - 50 && mouseY < height / 2 + 70) {
-      resetGame();
+    if(mouseX > width / 2 - 200 && mouseX < width / 2 + 200 && mouseY > height / 2 - 120 && mouseY < height / 2 + 120) {
+      if (gameState.stage < 2) {
+        nextStage(); // 다음 스테이지로
+      } else {
+        resetGame(); // 완전 클리어 후 처음부터
+      }
     }
   }
+  
+  // 5. 게임 오버 오버레이 클릭
   else if (gameState.activeView === "gameOver") {
-    if(mouseX > width / 2 - 150 && mouseX < width / 2 + 150 && mouseY > height / 2 - 50 && mouseY < height / 2 + 70) {
+    if(mouseX > width / 2 - 150 && mouseX < width / 2 + 150 && mouseY > height / 2 - 60 && mouseY < height / 2 + 80) {
       resetGame();
     }
   }

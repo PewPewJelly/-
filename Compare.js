@@ -11,9 +11,10 @@ const HINT_CONFIG = {
 function guessWordAction() {
   let val = inputField.value().trim();
   if (!compareHangulInput(val)) { inputField.value(""); return; }
-  determineHintsForItemSystem(val, ANSWER_WORD);
+  determineHintsForItemSystem(val, currentAnswer); // currentAnswer 반영
   inputField.value("");
   if (gameState.activeView === "gameOver") updateDOMVisibility();
+  saveGameProgress(); // 상태 저장
 }
 
 function determineHintsForItemSystem(guess, answer) {
@@ -38,7 +39,6 @@ function determineHintsForItemSystem(guess, answer) {
       if (component && other_ac_arr.includes(component)) cnt_other++;
     }
     
-    // 원래 판정
     if (gc.first == ac.first && cnt >= 2) hint_types.push("baekma");
     else if (gc.first != ac.first && cnt >= 2) hint_types.push("soongsil");
     else if (cnt_other >= 1) hint_types.push("shung");
@@ -48,32 +48,30 @@ function determineHintsForItemSystem(guess, answer) {
 
   let final_hint_icons = [];
   
-  //승리 조건: 두 글자 모두 진리 판정
+  // 승리 조건
   if (hint_types[0] === "jinri" && hint_types[1] === "jinri") {
     gameState.gameWon = true;
     gameState.activeView = "gameWin";
-    updateDOMVisibility
+    updateDOMVisibility(); // 괄호() 누락 수정 완료
     gameState.history.push({ guess: guess, hint: ["✨", "✨"] });
+    saveGameProgress();
     return;
   }
 
-  // --- [수정된 부분] 아이템 소모 및 하위 단계 체크 ---
+  // 아이템 소모 및 하위 단계 체크 
   for (let type of hint_types) {
     if (type === "jinri") {
       final_hint_icons.push("✨"); 
     } 
     else if (gameState.inventory[type] > 0) {
-      // 1. 해당 아이템이 있으면 소모
       gameState.inventory[type] -= 1;
       final_hint_icons.push(HINT_CONFIG[type].icon);
     } 
     else if (type !== "tulip" && gameState.inventory.bongsa > 0) {
-      // 2. 해당 아이템이 없는데 목튤립 판정이 아니라면, 봉사 아이템이라도 소모해서 힌트 표시
       gameState.inventory.bongsa -= 1;
       final_hint_icons.push(HINT_CONFIG.bongsa.icon);
     } 
     else {
-      // 3. 둘 다 없으면 ? 표시
       final_hint_icons.push("?");
     }
   }
@@ -81,4 +79,5 @@ function determineHintsForItemSystem(guess, answer) {
   gameState.history.push({ guess: guess, hint: final_hint_icons });
   gameState.turns -= 1;
   checkGameOverCondition();
+  saveGameProgress();
 }

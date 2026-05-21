@@ -25,6 +25,7 @@ function processExplore(buildingId) {
   gameState.isExploring = true;
   gameState.explorationTimer = 60;
   gameState.pendingBuildingId = buildingId;
+
 }
 
 function executeExploreLogic(buildingId) {
@@ -40,5 +41,6 @@ function executeExploreLogic(buildingId) {
     }
   }
   if (droppedItem) gameState.inventory[droppedItem] += 1;
+  saveGameProgress(); // 탐색 결과 저장
   checkGameOverCondition();
 }
