@@ -10,11 +10,82 @@ const HINT_CONFIG = {
 
 function guessWordAction() {
   let val = inputField.value().trim();
-  if (!compareHangulInput(val)) { inputField.value(""); return; }
-  determineHintsForItemSystem(val, currentAnswer); // currentAnswer 반영
+  
+  // 💡 1. 글자 수 검사 -> 커스텀 팝업
+  if (val.length !== 2) {
+    showInGamePopup("정확히 2글자를 입력해주세요!");
+    inputField.value("");
+    return;
+  }
+  
+  // 💡 2. 완성형 한글 검사 -> 커스텀 팝업
+  for (let ch of val) {
+    if (!(ch >= '가' && ch <= '힣')) {
+      showInGamePopup("올바른 완성형 한글을 입력해주세요!\n(자음/모음 낱자는 입력할 수 없습니다.)");
+      inputField.value("");
+      return;
+    }
+  }
+
+  // 고정된 ANSWER_WORD 대신 현재 스테이지의 정답(currentAnswer)을 적용합니다.
+  determineHintsForItemSystem(val, currentAnswer);
   inputField.value("");
   if (gameState.activeView === "gameOver") updateDOMVisibility();
-  saveGameProgress(); // 상태 저장
+}
+
+// 💡 3. Compare.js 안에서만 작동하는 HTML/CSS 커스텀 팝업 함수
+function showInGamePopup(message) {
+  let existingOverlay = document.getElementById("custom-popup-overlay");
+  if (existingOverlay) existingOverlay.remove();
+
+  let overlay = document.createElement("div");
+  overlay.id = "custom-popup-overlay";
+  overlay.style.position = "fixed";
+  overlay.style.top = "0";
+  overlay.style.left = "0";
+  overlay.style.width = "100vw";
+  overlay.style.height = "100vh";
+  overlay.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+  overlay.style.display = "flex";
+  overlay.style.justifyContent = "center";
+  overlay.style.alignItems = "center";
+  overlay.style.zIndex = "9999"; // zindex 오타 수정 (zIndex)
+
+  let box = document.createElement("div");
+  box.style.backgroundColor = "#ffffff";
+  box.style.padding = "25px 35px";
+  box.style.borderRadius = "12px";
+  box.style.boxShadow = "0px 4px 15px rgba(0,0,0,0.2)";
+  box.style.textAlign = "center";
+  box.style.fontFamily = "sans-serif";
+  box.style.minWidth = "280px";
+
+  let textNode = document.createElement("p");
+  textNode.innerText = message;
+  textNode.style.fontSize = "16px";
+  textNode.style.color = "#333333";
+  textNode.style.lineHeight = "1.5";
+  textNode.style.margin = "0 0 20px 0";
+  box.appendChild(textNode);
+
+  let btn = document.createElement("button");
+  btn.innerText = "확인";
+  btn.style.backgroundColor = "#6496dc";
+  btn.style.color = "#ffffff";
+  btn.style.border = "none";
+  btn.style.padding = "8px 25px";
+  btn.style.borderRadius = "6px";
+  btn.style.fontSize = "14px";
+  btn.style.cursor = "pointer";
+  btn.style.fontWeight = "bold";
+  
+  btn.onmouseover = () => btn.style.backgroundColor = "#1e90ff";
+  btn.onmouseout = () => btn.style.backgroundColor = "#6496dc";
+  btn.onclick = () => overlay.remove();
+  
+  box.appendChild(btn);
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
 }
 
 function determineHintsForItemSystem(guess, answer) {
@@ -39,6 +110,7 @@ function determineHintsForItemSystem(guess, answer) {
       if (component && other_ac_arr.includes(component)) cnt_other++;
     }
     
+    // 원래 판정
     if (gc.first == ac.first && cnt >= 2) hint_types.push("baekma");
     else if (gc.first != ac.first && cnt >= 2) hint_types.push("soongsil");
     else if (cnt_other >= 1) hint_types.push("shung");
@@ -48,20 +120,25 @@ function determineHintsForItemSystem(guess, answer) {
 
   let final_hint_icons = [];
   
-  // 승리 조건
+  // 승리 조건: 두 글자 모두 진리 판정
   if (hint_types[0] === "jinri" && hint_types[1] === "jinri") {
     gameState.gameWon = true;
     gameState.activeView = "gameWin";
+    
+    // 🔥 [연승 반영] 단어 추리 성공 시 연승 증가!
+    gameState.winStreak += 1;
+    
     updateDOMVisibility(); // 괄호() 누락 수정 완료
     gameState.history.push({ guess: guess, hint: ["✨", "✨"] });
-    saveGameProgress();
+    
+    saveGameProgress(); // 상태 실시간 저장
     return;
   }
 
-  // 아이템 소모 및 하위 단계 체크 
+  // --- 아이템 소모 및 하위 단계 체크 ---
   for (let type of hint_types) {
     if (type === "jinri") {
-      final_hint_icons.push("✨"); 
+      final_hint_icons.push("✨");
     } 
     else if (gameState.inventory[type] > 0) {
       gameState.inventory[type] -= 1;
@@ -79,5 +156,6 @@ function determineHintsForItemSystem(guess, answer) {
   gameState.history.push({ guess: guess, hint: final_hint_icons });
   gameState.turns -= 1;
   checkGameOverCondition();
-  saveGameProgress();
+  
+  saveGameProgress(); // 턴 차감 및 힌트 히스토리 저장
 }
