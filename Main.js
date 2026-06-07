@@ -1,17 +1,16 @@
-// 파일명: Main.js
-
+//AI 사용 비율 : 20%
 const BUILDING_DROP_MIN = 0.1;
 const BUILDING_DROP_MAX = 1.0;
 
-// 💡 올려주신 최종 로그 데이터를 반영하여 x, y, w 값 완벽 업데이트 완료!
+
 let buildings = [
-  // 🌟 [1티어 구역] 주요 랜드마크: 백마, 숭실 (밸런스를 위해 봉사도 섞음)
+  // 1티어
   { id: 1, name: "진리관", imgPath: "assets/b_jinri.png", img: null, x: 0.443, y: 0.144, w: 0.126, h: 0.15, dropItems: ["baekma", "soongsil", "bongsa"] },
   { id: 6, name: "안익태", imgPath: "assets/b_ahn.png", img: null, x: 0.142, y: 0.734, w: 0.146, h: 0.1, dropItems: ["baekma", "soongsil", "bongsa"] },
   { id: 10, name: "조만식", imgPath: "assets/b_cho.png", img: null, x: 0.579, y: 0.144, w: 0.127, h: 0.1, dropItems: ["baekma", "soongsil", "bongsa"] },
   { id: 14, name: "문화관", imgPath: "assets/b_culture.png", img: null, x: 0.013, y: 0.681, w: 0.124, h: 0.16, dropItems: ["baekma", "soongsil", "bongsa"] },
 
-  // 🤝 [2티어 구역] 일반 강의동 및 시설: 가장 많이 소모되는 봉사 중심, 그리고 슝슝
+  // 2티어
   { id: 2, name: "한경직", imgPath: "assets/b_han.png", img: null, x: 0.480, y: 0.538, w: 0.163, h: 0.2, dropItems: ["bongsa", "shung"] },
   { id: 4, name: "베어드", imgPath: "assets/b_baird.png", img: null, x: 0.302, y: 0.465, w: 0.150, h: 0.14, dropItems: ["bongsa", "shung"] },
   { id: 5, name: "형남공", imgPath: "assets/b_hyungnam.png", img: null, x: 0.292, y: 0.627, w: 0.182, h: 0.14, dropItems: ["bongsa", "shung"] },
@@ -21,7 +20,7 @@ let buildings = [
   { id: 12, name: "정보섬", imgPath: "assets/b_infosum.png", img: null, x: 0.687, y: 0.749, w: 0.228, h: 0.2, dropItems: ["bongsa", "shung"] },
   { id: 13, name: "경상관", imgPath: "assets/b_kyungsang.png", img: null, x: 0.072, y: 0.491, w: 0.150, h: 0.12, dropItems: ["bongsa", "shung"] },
 
-  // 🥀 [특수 구역] 외곽 및 운동장: 소거법을 위한 목튤립 중심, 그리고 슝슝
+  // 특수구역 
   { id: 3, name: "대운동장", imgPath: "assets/b_stadium.png", img: null, x: 0.107, y: 0.239, w: 0.221, h: 0.23, dropItems: ["tulip", "shung"] },
   { id: 15, name: "백마관", imgPath: "assets/b_baekma.png", img: null, x: 0.073, y: 0.087, w: 0.160, h: 0.08, dropItems: ["tulip", "shung"] },
 
@@ -29,6 +28,7 @@ let buildings = [
   { id: 7, name: "학생회관", imgPath: "assets/b_student.png", img: null, x: 0.342, y: 0.278, w: 0.160, h: 0.2, dropItems: [] }
 ];
 
+//AI의 도움을 받아 작성된 건물 드롭 확률 계산 함수
 function buildDropProbabilities(items) {
   const count = items.length;
   if (count === 0) return {};
@@ -73,6 +73,7 @@ function processExplore(buildingId) {
   gameState.explorationResult = null;
 }
 
+//AI의 도움을 받아 작성된 탐색 함수
 function executeExploreLogic(buildingId, accuracy = 0) {
   let building = buildings.find(b => b.id === buildingId);
   if (!building) return;

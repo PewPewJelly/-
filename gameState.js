@@ -1,5 +1,4 @@
-// 파일명: gameState.js
-
+//AI 사용 비율 : 50%
 const UI_CONFIG = {
   PHONE: { w: 280, h: 500, y: 80 },
   TITLE_BTN: { w: 280, h: 40, offset1: 40, offset2: 95, offset3: 150 },
@@ -35,7 +34,6 @@ let gameState = {
   tutorialHistory: [], 
   previousView: null,
   
-  // 💡 화면 전환 직후 더블클릭/스킵을 방지하기 위한 쿨다운 타이머
   overlayTimer: 0 
 };
 
@@ -45,6 +43,7 @@ const STAGE_ANSWERS = {
 };
 let currentAnswer = STAGE_ANSWERS[1];
 
+//AI 도움을 받은 localstorage 함수
 function saveGameProgress() {
   localStorage.setItem("ssu_word_game_save", JSON.stringify({
     turns: gameState.turns,

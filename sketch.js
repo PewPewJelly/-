@@ -1,5 +1,4 @@
-// 파일명: sketch.js
-
+//AI 사용 비율 : 20%
 const MAX_TURNS = 30; 
 let currentMaxTurns = MAX_TURNS;
 
@@ -9,6 +8,7 @@ let tutorialInput, tutorialSubmitBtn;
 let imgJinri, imgShung;
 let imgBaekma, imgSoongsil, imgBongsa, imgTulip; 
 
+//이미지 로드 방식에 AI 도움을 받음
 function preload() {
   imgJinri = loadImage('ImgJinri.png');
   imgShung = loadImage('ImgShung.png');
@@ -106,7 +106,6 @@ function drawGlobalHeader() {
   fill(255); textSize(22); textAlign(LEFT, CENTER);
   text(`숭실 단어 탐험 (Stage ${gameState.stage})`, 20, 30);
   
-  // 💡 연승 표시 텍스트 완전 제거
   
   textAlign(RIGHT, CENTER);
   textSize(22);

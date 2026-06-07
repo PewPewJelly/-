@@ -1,5 +1,4 @@
-// 파일명: Title.js
-
+//AI 사용 비율 : 30%
 function drawTitleScreen() {
   background(30, 144, 255);
   fill(255); textAlign(CENTER, CENTER);
@@ -56,6 +55,7 @@ function handleTitleClick(mx, my) {
   }
 }
 
+//설명 작성에 AI 사용
 function drawTutorialScreen() {
   background(240);
   let boxW = 680, boxH = 600;
@@ -82,7 +82,7 @@ function drawTutorialScreen() {
     text(t, boxX + 45, boxY + 170);
   } 
   else if (gameState.tutorialStep === 2) {
-    // 💡 백마와 숭실을 분리하여 초성 일치 여부를 명확히 강조!
+    // 백마와 숭실을 분리하여 초성 일치 여부를 명확히 강조!
     text("3단계 : 힌트 해석법 (기본 종류)", width / 2, boxY + 100);
     textSize(18); textAlign(LEFT, TOP); fill(80);
     
@@ -121,7 +121,7 @@ function drawTutorialScreen() {
     fill(60, 100, 200); textSize(20);
     text("💡 힌트 판정 예시 (정답이 '진리'일 때)", boxX + 40, sy); sy += 35;
     
-    // 💡 텍스트를 약간 줄여서 긴 설명도 한 줄에 깔끔하게 들어가도록 설정
+    // 텍스트를 약간 줄여서 긴 설명도 한 줄에 깔끔하게 들어가도록 설정
     fill(80); textSize(16);
     let iconS = 26;
     

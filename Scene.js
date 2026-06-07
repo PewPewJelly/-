@@ -1,5 +1,4 @@
-// 파일명: Scene.js
-
+//AI 사용 비율 : 20%
 function resetGame() {
     currentMaxTurns = MAX_TURNS;
     gameState.turns = currentMaxTurns; 
@@ -31,6 +30,7 @@ function nextStage() {
     saveGameProgress();
 }
 
+//해당 함수는 AI의 도움을 받음
 function updateDOMVisibility() {
   if (gameState.activeView === "phone") {
     if (inputField && submitBtn) { inputField.show(); submitBtn.show(); }
@@ -138,7 +138,6 @@ function handleWinClick(mx, my) {
     if (gameState.stage < 2) {
         nextStage();
     } else {
-        // 💡 게임 변수 초기화 후 곧바로 메인 타이틀 화면으로 덮어씌움
         resetGame();
         gameState.activeView = "title";
         if (typeof updateDOMVisibility === 'function') updateDOMVisibility();

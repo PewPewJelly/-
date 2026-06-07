@@ -1,5 +1,4 @@
-// 파일명: Phone.js
-
+//AI 사용 비율 : 10%
 function drawPhoneScreen() {
   drawCollectionBox(width - 200, 80);
   

@@ -1,8 +1,4 @@
-// 파일명: Map.js
-
-let debugMode = false; 
-let draggedBuilding = null; 
-
+//AI 사용 비율 : 10%
 function drawMapScreen() {
     drawCollectionBox(width - 200, 80);
 
@@ -17,12 +13,11 @@ function drawMapScreen() {
         let bW = width * b.w;
         let bH = height * b.h;
 
-        // --- 💡 학생회관(id: 7) 전용 특수 빛 효과 (크기 대폭 확대) ---
+        // 학생회관
         if (b.id === 7) {
-            // 기본 크기(35)와 박동 진폭(25)을 키워 훨씬 더 크게 퍼지도록 설정
             let glowIntensity = 35 + sin(frameCount * 0.05) * 25;
             drawingContext.shadowBlur = glowIntensity;
-            drawingContext.shadowColor = 'rgba(255, 215, 0, 1.0)'; // 색상도 100% 진하게 변경
+            drawingContext.shadowColor = 'rgba(255, 215, 0, 1.0)';
         }
 
         if (b.img && b.img.width > 1) {
@@ -32,12 +27,12 @@ function drawMapScreen() {
             rect(bX, bY, bW, bH);
         }
 
-        // --- 💡 다른 건물이나 텍스트에 빛이 번지지 않도록 즉시 초기화 ---
+        //다른 건물이나 텍스트에 빛이 번지지 않도록 즉시 초기화
         if (b.id === 7) {
             drawingContext.shadowBlur = 0;
         }
 
-        // --- 라벨 자동 생성 로직 ---
+        //라벨 생성
         let labelX = bX + bW / 2;       
         let labelY = bY + bH * 0.75;    
 
@@ -57,12 +52,7 @@ function drawMapScreen() {
         text(b.name, labelX, labelY);
         
         textStyle(NORMAL); 
-        // -----------------------------------------
-
-        if (debugMode) {
-            stroke(255, 0, 0); noFill();
-            rect(bX, bY, bW, bH); 
-        }
+       
     }
 }
 
@@ -79,16 +69,6 @@ function handleMapClick(mx, my) {
     return; 
   }
 
-  if (debugMode) {
-    for (let b of buildings) {
-      if (mx > width * b.x && mx < width * b.x + width * b.w && 
-          my > height * b.y && my < height * b.y + height * b.h) {
-        draggedBuilding = b;
-        return; 
-      }
-    }
-  }
-
   for (let b of buildings) {
     if (mx > width * b.x && mx < width * b.x + width * b.w && 
         my > height * b.y && my < height * b.y + height * b.h && b.id !== 7) {
@@ -103,42 +83,6 @@ function handleMapClick(mx, my) {
     gameState.activeView = "phone"; 
     if (typeof updateDOMVisibility === 'function') updateDOMVisibility();
   }
-}
-
-function mapMouseDragged() {
-  if (!debugMode || gameState.activeView !== "map") return;
-
-  if (draggedBuilding) {
-    draggedBuilding.x = mouseX / width;
-    draggedBuilding.y = mouseY / height;
-  }
-}
-
-function mapMouseReleased() {
-  if (draggedBuilding) {
-    console.log(`[${draggedBuilding.name}] 📍 새 좌표 복사 👉 x: ${draggedBuilding.x.toFixed(3)}, y: ${draggedBuilding.y.toFixed(3)}, w: ${draggedBuilding.w.toFixed(3)}`);
-    draggedBuilding = null;
-  }
-}
-
-function mapMouseWheel(event) {
-  if (!debugMode || gameState.activeView !== "map") return true;
-
-  for (let b of buildings) {
-    if (mouseX > width * b.x && mouseX < width * b.x + width * b.w &&
-        mouseY > height * b.y && mouseY < height * b.y + height * b.h) {
-      
-      if (event.delta > 0) {
-        b.w *= 0.95; 
-      } else {
-        b.w *= 1.05; 
-      }
-
-      console.log(`[${b.name}] 📐 새 크기 복사 👉 w: ${b.w.toFixed(3)} (x: ${b.x.toFixed(3)}, y: ${b.y.toFixed(3)})`);
-      return false; 
-    }
-  }
-  return true;
 }
 
 function drawExplorationOverlay() {

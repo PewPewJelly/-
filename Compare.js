@@ -1,5 +1,4 @@
-// 파일명: Compare.js
-
+//AI 사용 비율 : 70%
 const HINT_CONFIG = {
   jinri:    { name: "진리", icon: "✨" }, 
   baekma:   { name: "백마", icon: "🐴" },
@@ -12,7 +11,7 @@ const HINT_CONFIG = {
 function guessWordAction() {
   if (gameState.activeView !== "phone") return;
   
-  // 💡 정답을 맞추고 화면 전환을 기다리는 1초 동안에는 버튼 연타 차단!
+  // 화면 전환 후 1초 동안은 입력 무시
   if (gameState.winDelayTimer > 0) return; 
 
   let val = inputField.value().trim();
@@ -37,6 +36,7 @@ function guessWordAction() {
   }
 }
 
+//AI 도움을 받은 비교 함수
 function calculateHints(guess, answer) {
   let guess_parsed = splitHangulWord(guess);
   let answer_parsed = splitHangulWord(answer);
@@ -83,7 +83,6 @@ function applyGuessResult(guess, hint_types) {
     gameState.winStreak += 1;
     gameState.history.push({ guess: guess, hint: ["jinri", "jinri"] });
     
-    // 💡 기존의 즉시 화면 전환 로직을 없애고 1초(60프레임) 타이머 시작
     gameState.winDelayTimer = 60; 
     
     if (inputField) inputField.value("");
